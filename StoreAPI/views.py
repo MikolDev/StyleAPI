@@ -1,16 +1,17 @@
-from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Product, Category
 from .serializers import ProductSerializer, CategorySerializer
+from .filters import ProductFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class CategoryListApiView(APIView):
 
     # List all categories
     def get(self, request, *args, **kwargs):
-        categories = Category.objects
+        categories = Category.objects.all()
         serializer = CategorySerializer(categories, many = True)
         return Response(serializer.data, status = status.HTTP_200_OK)
     
@@ -95,10 +96,18 @@ class CategoryDetailApiView(APIView):
 
 
 class ProductListApiView(APIView):
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProductFilter
 
     # List all products
     def get(self, request, *args, **kwargs):
-        products = Product.objects
+        products = Product.objects.all()
+
+        # Category ID filter
+        filterset = self.filterset_class(request.GET, queryset=products)
+        if filterset.is_valid():
+            products = filterset.qs
+
         serializer = ProductSerializer(products, many = True)
         return Response(serializer.data, status = status.HTTP_200_OK)
     
