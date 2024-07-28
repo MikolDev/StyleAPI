@@ -8,6 +8,31 @@ API was created with Django and REST framework. Python 3.12.0
 
 ## Getting started
 
+0. After cloning repository go to `settings.py` and choose `DATABASE` configuration.
+
+### Docker
+
+1. Build and start containers
+
+```
+docker-compose build
+docker-compose up
+```
+
+2. Apply database migrations
+
+```
+docker-compose exec web python manage.py migrate
+```
+
+3. Create superuser
+
+```
+docker-compose exec web python manage.py createsuperuser
+```
+
+### Alternatively
+
 1. Make and activate your virtual environment.
 
 2. Install requirements:
